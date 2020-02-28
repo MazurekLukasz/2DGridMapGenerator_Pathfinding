@@ -13,7 +13,7 @@ public static class Algorithms
 
         Open.Add(Grid.StartNode);
         Node Current = Grid.StartNode;
-
+        
         Current.GCost = 0;
         Current.HCost = CalculateDistance(Grid.StartNode, Grid.EndNode, Grid);
         Current.CalculateFCost();
@@ -68,28 +68,35 @@ public static class Algorithms
         InitNodes(grid); // distance from start node for all nodes = max
         grid.StartNode.GCost = 0;
 
-        List<Node> Q = MapToNodeList(grid);
+        //List<Node> Q = MapToNodeList(grid);
+        List<Node> Q = new List<Node>();
+        Q.Add(grid.StartNode);
+
         while (Q.Count > 0)
         {
-            Node u = NodeWithLowestGCost(Q);
-            if (u == grid.EndNode)
+            Node current = NodeWithLowestGCost(Q);
+            if (current == grid.EndNode)
             {
                 return SetPath(grid.EndNode, grid);
             }// path has been found
 
-            Q.Remove(u);
+            Q.Remove(current);
 
-            foreach (var neighbour in GetNeighbourhood(u, grid))
+            foreach (var neighbour in GetNeighbourhood(current, grid))
             {
                 if (neighbour.Occupied)
                 {
-                    Q.Remove(neighbour);
                     continue;
                 }
-                if ((u.GCost + 1) < neighbour.GCost)
+
+                if ((current.GCost + 1) < neighbour.GCost)
                 {
-                    neighbour.GCost = u.GCost + 1;
-                    neighbour.ParentNode = u;
+                    neighbour.GCost = current.GCost + 1;
+                    neighbour.ParentNode = current;
+                    if (!Q.Contains(neighbour))
+                    {
+                        Q.Add(neighbour);
+                    }
                 }
             }
         }
@@ -104,7 +111,10 @@ public static class Algorithms
         List<Node> list = new List<Node>();
         foreach (var item in g.GetGridMap())
         {
-            list.Add(item.GetComponent<Node>());
+            if (!item.GetComponent<Node>().Occupied)
+            {
+                list.Add(item.GetComponent<Node>());
+            }
         }
         return list;
     }

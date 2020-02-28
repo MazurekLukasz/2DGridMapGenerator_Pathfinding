@@ -72,7 +72,7 @@ public class GameLogic : MonoBehaviour
         }
         else if (SelectedAlgorithm.value == 1)
         {
-            SetInfo("Second algorithm");
+            SetInfo("You've selected Dijkstra's algorithm");
             path = Algorithms.Dijkstra(Grid);
         }
         else
