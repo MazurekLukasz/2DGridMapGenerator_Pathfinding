@@ -17,7 +17,7 @@ public class GameLogic : MonoBehaviour
 
     [SerializeField] private CameraMovement Cam;
     [SerializeField] private Toggle ScreenToggle;
-
+    List<Node> path;
     void Start()
     {
         if (PlayerPrefs.GetInt("Fullscreen") == 1)
@@ -67,17 +67,17 @@ public class GameLogic : MonoBehaviour
 
     public void RunAlgorithmButton()
     {
+        path = null;
         if (Grid.MapReadyToWork())
         {
-            List<Node> path;
             if (SelectedAlgorithm.value == 0)
             {
-                SetInfo("You've selected A Star algorithm");
+                //SetInfo("You've selected A Star algorithm");
                 path = Algorithms.AStar(Grid);
             }
             else if (SelectedAlgorithm.value == 1)
             {
-                SetInfo("You've selected Dijkstra's algorithm");
+                //SetInfo("You've selected Dijkstra's algorithm");
                 path = Algorithms.Dijkstra(Grid);
             }
             else
@@ -88,7 +88,7 @@ public class GameLogic : MonoBehaviour
 
             if (path == null)
             {
-                SetInfo("There is no path");
+                SetInfo("There is no path!");
             }
             else
             {
@@ -96,14 +96,15 @@ public class GameLogic : MonoBehaviour
                 {
                     if (node != path[0] && node != path[path.Count - 1])
                     {
-                        node.GetComponent<SpriteRenderer>().color = Color.blue;
+                        node.GetComponent<SpriteRenderer>().color = Color.magenta;
                     }
                 }
+                SetInfo("Path Finded!");
             }
         }
         else
         {
-            SetInfo("There is no map !");
+            SetInfo("There is no map!");
         }
     }
 
@@ -122,7 +123,16 @@ public class GameLogic : MonoBehaviour
     }
     public void SaveButton(Text txt)
     {
-        SaveManager.SaveMap(txt,Grid);
+        if (Grid.MapReadyToWork())
+        {
+            SaveManager.SaveMap(txt, Grid);
+            SetInfo("Map saved!");
+        }
+        else
+        {
+            SetInfo("You doesn't have a map!");
+        }
+        
     }
     public void LoadButton(Text txt)
     {
@@ -156,7 +166,17 @@ public class GameLogic : MonoBehaviour
 
     public void ClearGridButton()
     {
+        if (Grid.GetGridMap() != null)
+        {
+            SetInfo("Grid removed!");
+        }
+        else
+        {
+            SetInfo("There is no grid to remove!");
+        }
+
         Grid.RemoveGrid();
+
     }
 
     public void ExitGameButton()
@@ -176,4 +196,14 @@ public class GameLogic : MonoBehaviour
         }
     }
 
+    public void ClearPath()
+    {
+        foreach (Node node in path)
+        {
+            if (node != path[0] && node != path[path.Count - 1])
+            {
+                node.GetComponent<SpriteRenderer>().color = Color.white;
+            }
+        }
+    }
 }

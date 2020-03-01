@@ -29,8 +29,11 @@ public class GridMap : MonoBehaviour
         ObstaclesGenerationAlgorithm();
         RandomStartEndNodes(n);
 
-        if (StartNode != null)
-        { Cam.ChangePosition(new Vector2(StartNode.gameObject.transform.position.x, StartNode.gameObject.transform.position.y));}    
+        if (Grid != null)
+        {
+            Cam.ChangePosition(new Vector2(n/2, n/2));
+            Cam.SetNewLimit(n);
+        }    
     }
     void CreateGrid(int n)
     {
@@ -53,13 +56,20 @@ public class GridMap : MonoBehaviour
             StartNode = RandomNode(n);
             EndNode = RandomNode(n);
 
-            StartNode.GetComponent<SpriteRenderer>().color = Color.green;
-            EndNode.GetComponent<SpriteRenderer>().color = Color.red;
+            SetFlags();
         }
         else
         {
             Debug.Log("no free points");
         }
+    }
+
+    void SetFlags()
+    {
+        StartNode.GetComponent<SpriteRenderer>().color = Color.yellow;
+        Instantiate(ObstaclePrefabs[4], StartNode.transform.position + new Vector3(.4f, .4f), new Quaternion(), transform);
+        EndNode.GetComponent<SpriteRenderer>().color = Color.yellow;
+        Instantiate(ObstaclePrefabs[5], EndNode.transform.position + new Vector3(.4f, .4f), new Quaternion(), transform);
     }
 
     Node RandomNode(int n)
@@ -69,9 +79,9 @@ public class GridMap : MonoBehaviour
         {
             block = new Vector2Int(Random.Range(0, n), Random.Range(0, n));
         }
-        while (Grid[block.x, block.y].GetComponent<Node>().Occupied || Grid[block.x, block.y] == StartNode);
+        while (ReturnNode(block.x, block.y).Occupied || ReturnNode(block.x, block.y) == StartNode);
 
-        return Grid[block.x, block.y].GetComponent<Node>();
+        return ReturnNode(block.x, block.y);
     }
 
     public void ObstaclesGenerationAlgorithm()
@@ -214,8 +224,7 @@ public class GridMap : MonoBehaviour
         StartNode = ReturnNode(data.StartNode[0], data.StartNode[1]);
         EndNode = ReturnNode(data.EndNode[0], data.EndNode[1]);
 
-        StartNode.GetComponent<SpriteRenderer>().color = Color.green;
-        EndNode.GetComponent<SpriteRenderer>().color = Color.red;
+        SetFlags();
 
         int k = data.ObstalceType.Length;
 
@@ -250,8 +259,11 @@ public class GridMap : MonoBehaviour
         }
 
 
-        if (StartNode != null)
-        { Cam.ChangePosition(new Vector2(StartNode.gameObject.transform.position.x, StartNode.gameObject.transform.position.y)); }
+        if (Grid != null)
+        {
+            Cam.ChangePosition(new Vector2(MapSize/2, MapSize/2));
+            Cam.SetNewLimit(MapSize);
+        }
 
     }
 
