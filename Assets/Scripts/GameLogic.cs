@@ -20,12 +20,12 @@ public class GameLogic : MonoBehaviour
     List<Node> path;
     void Start()
     {
-        if (PlayerPrefs.GetInt("Fullscreen") == 1)
+        if (PlayerPrefs.GetInt("Fullscreen",1) == 1)
         {
             ScreenToggle.isOn = true;
             Screen.fullScreen = true;
         }
-        else
+        else if (PlayerPrefs.GetInt("Fullscreen") == 0)
         {
             ScreenToggle.isOn = false;
             Screen.fullScreen = false;
@@ -189,10 +189,13 @@ public class GameLogic : MonoBehaviour
         if (ScreenToggle.isOn == true)
         {
             Screen.fullScreen = true;
+            PlayerPrefs.SetInt("Fullscreen", 1);
+
         }
         else
         {
             Screen.fullScreen = false;
+            PlayerPrefs.SetInt("Fullscreen", 0);
         }
     }
 
