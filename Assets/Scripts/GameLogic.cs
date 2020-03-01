@@ -16,18 +16,21 @@ public class GameLogic : MonoBehaviour
     [SerializeField] private Button SaveLoadButton;
 
     [SerializeField] private CameraMovement Cam;
-    // Start is called before the first frame update
+    [SerializeField] private Toggle ScreenToggle;
+
     void Start()
     {
-        
+        if (PlayerPrefs.GetInt("Fullscreen") == 1)
+        {
+            ScreenToggle.isOn = true;
+            Screen.fullScreen = true;
+        }
+        else
+        {
+            ScreenToggle.isOn = false;
+            Screen.fullScreen = false;
+        }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
 
     public int CheckInput(Text t, int min)
     {
@@ -64,36 +67,43 @@ public class GameLogic : MonoBehaviour
 
     public void RunAlgorithmButton()
     {
-        List<Node> path;
-        if (SelectedAlgorithm.value == 0)
+        if (Grid.MapReadyToWork())
         {
-            SetInfo("You've selected A Star algorithm");
-            path = Algorithms.AStar(Grid);
-        }
-        else if (SelectedAlgorithm.value == 1)
-        {
-            SetInfo("You've selected Dijkstra's algorithm");
-            path = Algorithms.Dijkstra(Grid);
-        }
-        else
-        {
-            path = null;
-        } 
-
-
-        if (path == null)
-        {
-            SetInfo("There is no path");
-        }
-        else
-        {
-            foreach (Node node in path)
+            List<Node> path;
+            if (SelectedAlgorithm.value == 0)
             {
-                if (node != path[0] && node != path[path.Count - 1])
+                SetInfo("You've selected A Star algorithm");
+                path = Algorithms.AStar(Grid);
+            }
+            else if (SelectedAlgorithm.value == 1)
+            {
+                SetInfo("You've selected Dijkstra's algorithm");
+                path = Algorithms.Dijkstra(Grid);
+            }
+            else
+            {
+                path = null;
+            }
+
+
+            if (path == null)
+            {
+                SetInfo("There is no path");
+            }
+            else
+            {
+                foreach (Node node in path)
                 {
-                    node.GetComponent<SpriteRenderer>().color = Color.blue;
+                    if (node != path[0] && node != path[path.Count - 1])
+                    {
+                        node.GetComponent<SpriteRenderer>().color = Color.blue;
+                    }
                 }
             }
+        }
+        else
+        {
+            SetInfo("There is no map !");
         }
     }
 
@@ -147,6 +157,23 @@ public class GameLogic : MonoBehaviour
     public void ClearGridButton()
     {
         Grid.RemoveGrid();
+    }
+
+    public void ExitGameButton()
+    {
+        Application.Quit();
+    }
+
+    public void FullscreenUpdate()
+    {
+        if (ScreenToggle.isOn == true)
+        {
+            Screen.fullScreen = true;
+        }
+        else
+        {
+            Screen.fullScreen = false;
+        }
     }
 
 }

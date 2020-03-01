@@ -254,4 +254,16 @@ public class GridMap : MonoBehaviour
         { Cam.ChangePosition(new Vector2(StartNode.gameObject.transform.position.x, StartNode.gameObject.transform.position.y)); }
 
     }
+
+    public bool MapReadyToWork()
+    {
+        if (Grid == null || StartNode == null || EndNode == null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 }
