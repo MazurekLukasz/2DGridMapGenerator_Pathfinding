@@ -9,9 +9,12 @@ public static class SaveManager
 {
     public static void SaveMap(Text txt,GridMap Map)
     {
+        string tmp = txt.text;
         BinaryFormatter formatter = new BinaryFormatter();
+        if (tmp == "")
+        { tmp = "Unknown"; }
 
-        string path = Application.persistentDataPath + "/" + txt.text + ".map";
+        string path = Application.persistentDataPath + "/" + tmp + ".map";
         if (File.Exists(path))
         {
             Debug.Log("file already exists");
@@ -26,7 +29,7 @@ public static class SaveManager
 
     public static Save Load(Text txt)
     {
-        string path = Application.persistentDataPath + "/" + txt.text + ".map";
+        string path = Application.persistentDataPath + "/" + txt.text;
         if (File.Exists(path))
         {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -38,7 +41,6 @@ public static class SaveManager
         }
         else
         {
-            Debug.Log("File doesn't exists !");
             return null;
         }
     }

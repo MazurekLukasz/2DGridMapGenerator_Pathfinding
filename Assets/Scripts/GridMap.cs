@@ -60,7 +60,7 @@ public class GridMap : MonoBehaviour
         }
         else
         {
-            Debug.Log("no free points");
+                         
         }
     }
 

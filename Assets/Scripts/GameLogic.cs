@@ -18,6 +18,9 @@ public class GameLogic : MonoBehaviour
     [SerializeField] private CameraMovement Cam;
     [SerializeField] private Toggle ScreenToggle;
     List<Node> path;
+    [SerializeField] private GameObject LoadPanel;
+    [SerializeField] private GameObject MenuPanel;
+
     void Start()
     {
         if (PlayerPrefs.GetInt("Fullscreen",1) == 1)
@@ -137,23 +140,34 @@ public class GameLogic : MonoBehaviour
     public void LoadButton(Text txt)
     {
         Save data = SaveManager.Load(txt);
-        Grid.RecoveryMapFromSaveFile(data);
+        if (data != null)
+            Grid.RecoveryMapFromSaveFile(data);
+        else
+        {
+            SetInfo("There is a problem with your map file!");
+        }
     }
 
     public void FilesList(ScrollRect rect)
     {
-        //Vector2 pos = new Vector2(rect.transform.position.x, rect.transform.position.x);
-        string path = Application.persistentDataPath + "/";
-        Vector3 pos = new Vector3(100,-14,0); 
-        foreach (string file in System.IO.Directory.GetFiles(path, "*.map"))
+        if (rect != null)
         {
-            
-            Button but = Instantiate(SaveLoadButton,rect.content);
-            but.GetComponentInChildren<Text>().text = file.Substring(file.LastIndexOf('/') + 1);
-            but.transform.localPosition = pos;
-            pos = pos - new Vector3(0,28,0); 
-            //but.transform.localPosition = 
+            string Path = Application.persistentDataPath + "/";
+            foreach (string file in System.IO.Directory.GetFiles(Path, "*.map"))
+            {
+                Button but = Instantiate(SaveLoadButton,rect.content.transform,false) as Button;
+                but.GetComponentInChildren<Text>().text = file.Substring(file.LastIndexOf('/') + 1);
+                but.onClick.AddListener( ()=> {
+                    LoadButton(but.GetComponentInChildren<Text>());
+                    ClosePanel(LoadPanel);
+                    OpenPanel(MenuPanel);
+                    PauseCamMovement(false);
+                    ClearFileList(rect);
+                } );
+            }
+            rect.content.ForceUpdateRectTransforms();
         }
+
     }
 
     public void ClearFileList(ScrollRect rect)
@@ -162,6 +176,7 @@ public class GameLogic : MonoBehaviour
         {
             Destroy(item.gameObject);
         }
+        rect.content.ForceUpdateRectTransforms();
     }
 
     public void ClearGridButton()
@@ -201,12 +216,20 @@ public class GameLogic : MonoBehaviour
 
     public void ClearPath()
     {
-        foreach (Node node in path)
+        if (path != null)
         {
-            if (node != path[0] && node != path[path.Count - 1])
+            foreach (Node node in path)
             {
-                node.GetComponent<SpriteRenderer>().color = Color.white;
+                if (node != path[0] && node != path[path.Count - 1])
+                {
+                    if(node != null)
+                    node.GetComponent<SpriteRenderer>().color = Color.white;
+                }
             }
+        }
+        else
+        {
+            SetInfo("There is no path!");
         }
     }
 }
