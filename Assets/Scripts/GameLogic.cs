@@ -226,6 +226,7 @@ public class GameLogic : MonoBehaviour
                     node.GetComponent<SpriteRenderer>().color = Color.white;
                 }
             }
+            SetInfo("Path removed!");
         }
         else
         {
